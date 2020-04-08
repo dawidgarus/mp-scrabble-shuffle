@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button routerLink="/">New game</ion-button>
+        </ion-buttons>
+        <ion-title>
+            Game
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+    <ng-container *ngFor="let dummy of [queue]">
+        <ion-item lines="full" color="primary">
+            <ion-label>{ left, plural, one { 1 tile } other { {{left}} tiles } } left</ion-label>
+        </ion-item>
+        <ng-container *ngIf="left > 0">
+            <ion-item lines="full" *ngIf="left > 1">
+                <ion-label position="stacked">Number of tiles:</ion-label>
+                <ion-range [min]="math.min(1, left)" [max]="math.min(9, left)" [step]="1" [snaps]="true" [ticks]="true" [(ngModel)]="tiles">
+                    <span slot="start">{{math.min(1, left)}}</span>
+                    <span slot="end">{{math.min(9, left)}}</span>
+                </ion-range>
+            </ion-item>
+            <ion-item button lines="full" (click)="onDraw(tiles)">
+                <ion-label>Draw { tiles, plural, one { 1 tile } other { {{tiles}} tiles } }</ion-label>
+            </ion-item>
+            <ion-item button lines="full" (click)="onDiscard(tiles)">
+                <ion-label>Discard { tiles, plural, one { 1 tile } other { {{tiles}} tiles } }</ion-label>
+            </ion-item>
+        </ng-container>
+        <ion-item button lines="full" (click)="onUndo()" *ngIf="history.length">
+            <ion-label>Undo last move</ion-label>
+        </ion-item>
+        <ion-list-header *ngIf="history.length">
+            <ion-label>Game history</ion-label>
+        </ion-list-header>
+        <ion-item lines="full" *ngFor="let step of history" [ngSwitch]="step.type">
+            <ion-label *ngSwitchCase="'draw'">Draw:
+                <ng-container *ngFor="let tile of step.tiles; let index=index">{{index ? ', ' : ''}}<strong>{{tile}}</strong></ng-container>
+            </ion-label>
+            <ion-label *ngSwitchCase="'discard'">Discarded { step.count, plural, one { 1 tile } other { {{step.count}} tiles } }</ion-label>
+        </ion-item>
+    </ng-container>
+</ion-content>

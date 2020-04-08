@@ -1,0 +1,50 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>
+            MP Scrabble Shuffle
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<div class="container">
+
+    <form #ngForm="ngForm">
+        <ion-list>
+            <ion-list-header>
+                <ion-label>Game options</ion-label>
+            </ion-list-header>
+            <ion-item lines="full">
+                <ion-label position="stacked">Language</ion-label>
+                <ion-select value="en">
+                    <ion-select-option value="en">English</ion-select-option>
+                </ion-select>
+            </ion-item>
+            <ion-list-header>
+                <ion-label>Seed shuffle</ion-label>
+            </ion-list-header>
+            <ion-item-sliding *ngFor="let seed of seeds; let index=index; trackBy: trackByIndex" #slidingItem
+                              (click)="slidingItem.close()">
+                <ion-item-options>
+                    <ion-item-option (click)="onRandomizeSeed(seed)">Randomize</ion-item-option>
+                    <ion-item-option *ngIf="index > 1" color="danger" (click)="onRemoveSeed(index)">Remove</ion-item-option>
+                </ion-item-options>
+                <ion-item lines="full">
+                    <ion-label position="stacked">Seed #{{index + 1}}</ion-label>
+                    <ion-input name="seed-{{index + 1}}" placeholder="Enter 10 digit number" pattern="[0-9]*" [minlength]="10"
+                               [maxlength]="10" [required]="true" [(ngModel)]="seed.value" #inputModel="ngModel"></ion-input>
+                    <ion-badge slot="end" color="danger" *ngIf="inputModel.errors?.required">Required field</ion-badge>
+                    <ion-badge slot="end" color="danger" *ngIf="inputModel.errors?.minlength">Too short value</ion-badge>
+                    <ion-badge slot="end" color="danger" *ngIf="inputModel.errors?.pattern">Not a number</ion-badge>
+                </ion-item>
+            </ion-item-sliding>
+            <ion-item button detail="false" color="darker" lines="full" (click)="onAddSeed()">
+                <ion-label>Add another seed</ion-label>
+                <ion-icon name="add" slot="end"></ion-icon>
+            </ion-item>
+        </ion-list>
+    </form>
+</div>
+<ion-footer [translucent]="true">
+    <ion-toolbar>
+        <ion-button expand="block" [disabled]="!ngForm.valid" (click)="onPlay()">Play</ion-button>
+    </ion-toolbar>
+</ion-footer>
